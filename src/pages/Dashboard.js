@@ -1,22 +1,26 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
-
+import {Card, Label, Result, BorderIn, InputContainer,
+  CardTitle, CardHeader, Input, InputGroups, Select} from '../components/Card';
+import api from '../services/api';
+import chart from '../assets/images/chart.svg';
+import Products from '../components/Products';
+import {formatCoin} from '../utils.js';
 
 const Page = styled.div`
   font-family: 'Montserrat';
-  margin: 0;
-  background: var(--background-page);
   width: 100%;
   height: 100%;
+  background: var(--background-page);
 
   display: flex;
   flex-direction: row;
-
 `;
 
 const Container = styled.div`
+  /* width: 100%; */
   display: flex;
   flex-direction: column;
   padding: 24px 20px;
@@ -27,7 +31,58 @@ const TitlePrimary = styled.h2`
   color: var(--primary-color);
 `;
 
+const Portfolio = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 11px;
+`;
+
+
 function Dashboard(){
+  const [portfolio, setPortfolio] = useState({});
+  const [originalProducts, setOriginalProducts] = useState([]);
+  const [dailyEquityData, setDailyEquityData] = useState([]);
+
+  const [search, setSearch] = useState('');
+  const [select, setSelect] = useState('');
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    api.get('getFixedIncomeClassData')
+      .then(response => {
+        setPortfolio(response.data.data.snapshotByPortfolio);
+        setDailyEquityData(response.data.data.dailyEquityByPortfolioChartData);
+        setOriginalProducts(response.data.data.snapshotByProduct);
+        setProducts(response.data.data.snapshotByProduct);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
+
+  function handleSearch(e){
+    const inputValue = String(e.target.value).toLowerCase();
+    setSearch(inputValue);
+    // setProducts(searchProducts); 
+  }
+
+  function searchProducts(){
+    return products.filter( product => {
+      const name = String(product.fixedIncome.name).toLowerCase();
+      const type = String(product.fixedIncome.bondType).toLowerCase();
+      return name.includes(search) || type.includes(search);
+    })
+  }
+
+  useEffect(() => {
+    if(search === ''){
+      setProducts(originalProducts);
+    }else{
+      setProducts(searchProducts);
+    }
+  }, [search]);
+
   return(
     <>
       <Header />
@@ -35,6 +90,166 @@ function Dashboard(){
         <Sidebar />
         <Container>
           <TitlePrimary>Renda Fixa</TitlePrimary>
+          
+          <Portfolio>
+            <Card small>
+              <BorderIn></BorderIn>
+              <div>
+                <Label>Saldo Bruto</Label>
+                <Result>R$ {formatCoin(portfolio.equity)}</Result>
+              </div>
+            </Card>
+
+            <Card small>
+              <BorderIn></BorderIn>
+              <div>
+                <Label>Valor aplicado</Label>
+                <Result>R$ {formatCoin(portfolio.valueApplied)}</Result>
+              </div>
+            </Card>
+
+            <Card small>
+              <BorderIn></BorderIn>
+              <div>
+                <Label>Resultado</Label>
+                <Result>R$ {formatCoin(portfolio.equityProfit)}</Result>
+              </div>
+            </Card>
+
+            <Card small>
+              <BorderIn></BorderIn>
+              <div>
+                <Label>Rentabilidade</Label>
+                <Result>{portfolio.percentageProfit}%</Result>
+              </div>
+            </Card>
+
+            <Card small>
+              <BorderIn></BorderIn>
+              <div>
+                <Label>cdi</Label>
+                <Result>{portfolio.indexerValue}%</Result>
+              </div>
+            </Card>
+
+            <Card small>
+              <BorderIn></BorderIn>
+              <div>
+                <Label>% sobre cdi</Label>
+                <Result>{portfolio.percentageOverIndexer}%</Result>
+              </div>
+            </Card>
+          </Portfolio>
+
+          <Card >
+            {/* <CardTitle>Rentabilidade de Títulos</CardTitle> */}
+            <img src={chart} alt=""/>
+          </Card>
+
+          <Card >
+            <CardHeader>
+              <CardTitle>Minhas rendas fixas</CardTitle>
+                <InputGroups>
+                  <InputContainer>
+                    <Select 
+                      name="order" 
+                      value={select}
+                      onChange={e => {setSelect(e.target.value)}}
+                    >
+                      <option>Ordernar por</option>
+                      <option value="title">Titulo</option>
+                      <option value="profitability">Rentabilidade</option>
+                      <option value="due">Vencimento</option>
+                    </Select>
+                  </InputContainer>
+                  <InputContainer>
+                  <span className="material-icons">
+                    search
+                  </span>
+                  <Input 
+                    placeholder="Pesquise por titulo ou classe"  
+                    type="text"
+                    value={search}
+                    onChange={e => handleSearch(e.target.value)} 
+                  />
+                </InputContainer>
+              </InputGroups>
+            </CardHeader>
+            <Products products={products} />
+            {/* {products.map((product, index) => {
+              return(
+                <DetailedRow key={index}>
+                  <DetailedCard>
+                    <DetailedCardHeader>
+                      <Label>Titulo</Label>
+                    </DetailedCardHeader>
+                    <DetailedCardBody>
+                      <TitleName>{product.fixedIncome.name}</TitleName>
+                      <div>
+                        <Label>Classe</Label>
+                        <Data>{product.fixedIncome.bondType}</Data>
+                      </div>
+                    </DetailedCardBody>
+                  </DetailedCard>
+
+                  <DetailedCard>
+                    <DetailedCardHeader>
+                      <Label>Resultado</Label>
+                    </DetailedCardHeader>
+                    <DetailedCardBody>
+                      <div>
+                        <Label>Valor Inves.</Label>
+                        <Data green>{formatCoin(product.position.valueApplied)}</Data>
+                      </div>
+
+                      <div>
+                        <Label>Saldo Bruto</Label>
+                        <Data green>{formatCoin(product.position.equity)}</Data>
+                      </div>
+
+                      <div>
+                        <Label>Rent.</Label>
+                        <Data green>{product.position.profitability}%</Data>
+                      </div>
+
+                      <div>
+                        <Label>% da cart.</Label>
+                        <Data green>{product.position.portfolioPercentage}%</Data>
+                      </div>
+
+                      <div>
+                        <Label>{product.position.indexerLabel}</Label>
+                        <Data green>{product.position.indexerValue}</Data>
+                      </div>
+
+                      <div>
+                        <Label>sobre {product.position.indexerLabel}</Label>
+                        <Data green>{product.position.percentageOverIndexer}</Data>
+                      </div>
+                    </DetailedCardBody>
+                  </DetailedCard>
+
+                  <DetailedCard>
+                    <DetailedCardHeader>
+                      <Label>Vencimento</Label>
+                    </DetailedCardHeader>
+                    <DetailedCardBody>
+                      <div>
+                        <Label>data venc.</Label>
+                        <Data blue>{product.due.date}</Data>
+                      </div>
+
+                      <div>
+                        <Label>Dias até venc.</Label>
+                        <Data blue>{product.due.daysUntilExpiration}</Data>
+                      </div>
+                    </DetailedCardBody>
+                  </DetailedCard>
+                </DetailedRow>
+              ) 
+            })} */}
+          </Card>
+
         </Container>
       </Page>
     </>
