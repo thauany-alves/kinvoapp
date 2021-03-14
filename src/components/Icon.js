@@ -7,4 +7,5 @@ export const Icon = styled.div`
   margin-right: 8px;
   /* background: var(--border-card); */
   background: ${props => props.selected ? "var(--primary-color)" : "var(--border-card)"};
+  color: white;
 `;

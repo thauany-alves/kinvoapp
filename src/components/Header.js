@@ -5,6 +5,7 @@ import { Icon } from './Icon';
 
 const HeaderContainer =  styled.header`
   background: var(--background-card);
+  /* width: 100%; */
   height: 90px;
   display: flex;
   flex-direction: row;
@@ -13,22 +14,22 @@ const HeaderContainer =  styled.header`
 
   padding: 16px;
   border-bottom: 1px solid var(--background-page);
+
 `;
 
 const Items = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 20px;
+  gap: 30px;
 `;
 
 const Item = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  min-width: 140px;
 `;
-
-
 
 const Label = styled.p`
   font-size: 8px;

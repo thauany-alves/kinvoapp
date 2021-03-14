@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { Icon } from './Icon';
 
 const Container = styled.div`
-  width: 220px;
-  min-height: 100vh;
+  min-width: 220px;
+  height: 100%;
   background: var(--background-card);
 
   display: flex;

@@ -2,12 +2,14 @@
   --background-page: #EEF2F4;
   --background-card: white;
   --border-card: #EEF2F4;
+  --border-in: #DAE0E3;
   --primary-color: #4C309B;
-  --selected_item: #F8FAFB;
+  --selected-item: #F8FAFB;
   --text-label-header: #A5A5A5;
   --text-items: #707B81;
   --text-title: #627179;
   --text-color-bold: #4E5B61;
+
 
   --color-green: #38BFA0;
   --color-blue: #008DCB;
@@ -23,4 +25,5 @@
 body {
   margin: 0;
   font-family: 'Montserrat';
+  background: var(--background-page);
 }
