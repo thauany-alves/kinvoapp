@@ -18,7 +18,6 @@ const Page = styled.div`
   display: flex;
   flex-direction: row;
 `;
-
 const Container = styled.div`
   /* width: 100%; */
   display: flex;
@@ -64,7 +63,13 @@ function Dashboard(){
   function handleSearch(e){
     const inputValue = String(e.target.value).toLowerCase();
     setSearch(inputValue);
-    // setProducts(searchProducts); 
+    
+  }
+
+  function handleSelect(e){
+    const selectValue = e.target.value;
+    setSelect(selectValue);
+    sortProduct(selectValue);
   }
 
   function searchProducts(){
@@ -75,12 +80,47 @@ function Dashboard(){
     })
   }
 
-  useEffect(() => {
-    if(search === ''){
-      setProducts(originalProducts);
-    }else{
-      setProducts(searchProducts);
+  
+  function orderByName(a, b){
+    return a.fixedIncome.name > b.fixedIncome.name ? 1 : a.fixedIncome.name < b.fixedIncome.name ? -1 : 0
+  }
+
+  function orderByType(a, b){
+    return a.fixedIncome.bondType > b.fixedIncome.bondType ? 1 : a.fixedIncome.bondType < b.fixedIncome.bondType ? -1 : 0
+  }
+
+  function orderByLowerProfitability(a, b){
+    return a.position.profitability - b.position.profitability;
+  }
+
+  function orderByGreaterProfitability(a, b){
+    return b.position.profitability - a.position.profitability;
+  }
+
+  function sortProduct(select){
+    console.log('Entrou no ordenar por ', select)
+    switch (select){
+      case 'name' : 
+        return products.sort(orderByName);
+      case 'type':
+        return products.sort(orderByType);
+      case 'lowerprofitability':
+        return products.sort(orderByLowerProfitability)
+      case 'greaterprofitability':
+        return products.sort(orderByGreaterProfitability)
+      default:
+        return originalProducts;
     }
+        
+  }
+
+  useEffect(() => {
+    if(search === '') {
+      setProducts(originalProducts);
+      sortProduct(select);
+    }
+    else
+      setProducts(searchProducts);
   }, [search]);
 
   return(
@@ -154,12 +194,13 @@ function Dashboard(){
                     <Select 
                       name="order" 
                       value={select}
-                      onChange={e => {setSelect(e.target.value)}}
+                      onChange={handleSelect}
                     >
                       <option>Ordernar por</option>
-                      <option value="title">Titulo</option>
-                      <option value="profitability">Rentabilidade</option>
-                      <option value="due">Vencimento</option>
+                      <option value="name">Titulo</option>
+                      <option value="bondType">Tipo</option>
+                      <option value="lowerprofitability">Menor Rentabilidade</option>
+                      <option value="greaterprofitability">Maior Rentabilidade</option>
                     </Select>
                   </InputContainer>
                   <InputContainer>
@@ -170,7 +211,7 @@ function Dashboard(){
                     placeholder="Pesquise por titulo ou classe"  
                     type="text"
                     value={search}
-                    onChange={e => handleSearch(e.target.value)} 
+                    onChange={handleSearch} 
                   />
                 </InputContainer>
               </InputGroups>
