@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Icon } from './Icon';
 
@@ -43,7 +43,7 @@ const Label = styled.p`
   width: 120px;
 `;
 
-const ArrowIcon = styled.span`
+export const ArrowIcon = styled.span`
   color: var(--border-card);
   right: 12px;
   position: absolute;
@@ -63,28 +63,28 @@ const Mark = styled.div`
   return(
     <Container>  
       <MenuItem>
-        <Icon />
+        <Icon><span className="material-icons">account_balance_wallet</span></Icon>
         <Label>Resumo da Carteira</Label>
         <ArrowIcon className="material-icons">
           keyboard_arrow_right
         </ArrowIcon>
       </MenuItem>        
       <MenuItem>
-        <Icon />
+        <Icon><span className="material-icons">pie_chart_outline</span></Icon>
         <Label>Meus Produtos</Label>
         <ArrowIcon className="material-icons">
           keyboard_arrow_right
         </ArrowIcon>
       </MenuItem>  
       <MenuItem>
-        <Icon />
+        <Icon><span className="material-icons">attach_money</span></Icon>
         <Label>Meus proventos</Label>
         <ArrowIcon className="material-icons">
           keyboard_arrow_right
         </ArrowIcon>
       </MenuItem>
       <MenuItem selected>
-            <Icon selected />
+            <Icon selected ><span className="material-icons">view_in_ar</span></Icon>
             <Label>Classe de Ativos</Label>
             <ArrowIcon className="material-icons">
               keyboard_arrow_right
@@ -121,28 +121,28 @@ const Mark = styled.div`
             </MenuItem>
         </SubMenu>
       <MenuItem>
-        <Icon />
+        <Icon><span className="material-icons">trending_up</span></Icon>
         <Label>Rentabilidade Real</Label>
         <ArrowIcon className="material-icons">
           keyboard_arrow_right
         </ArrowIcon>
       </MenuItem>
       <MenuItem>
-        <Icon />
+        <Icon><span className="material-icons">show_chart</span></Icon>
         <Label>Projeção da Carteira</Label>
         <ArrowIcon className="material-icons">
           keyboard_arrow_right
         </ArrowIcon>
       </MenuItem>
       <MenuItem>
-        <Icon />
+        <Icon><span className="material-icons">all_out</span></Icon>
         <Label>Risco X Retorno</Label>
         <ArrowIcon className="material-icons">
           keyboard_arrow_right
         </ArrowIcon>
       </MenuItem>
       <MenuItem>
-            <Icon />
+            <Icon><span className="material-icons">lock</span></Icon>
             <Label>Cobertura do FGC</Label>
             <ArrowIcon className="material-icons">
               keyboard_arrow_right

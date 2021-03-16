@@ -53,7 +53,7 @@ function Header(){
       
     <Items>
       <Item>
-        <Icon />
+        <Icon><span className="material-icons">account_balance_wallet</span></Icon>
         <div>
           <Label>Saldo Bruto</Label>
           <Value>130.521.230,02</Value>
@@ -61,7 +61,9 @@ function Header(){
       </Item>
 
       <Item>
-        <Icon />
+        <Icon>
+          <span className="material-icons">arrow_upward</span>
+        </Icon>
         <div>
           <Label>Valor Aplicado</Label>
           <Value>521.230,02</Value>
@@ -69,22 +71,34 @@ function Header(){
       </Item>
 
       <Item>
-        <Icon />
+        <Icon>
+          <span class="material-icons">
+            trending_up
+          </span>
+        </Icon>
         <div>
-          <Label>Saldo Bruto</Label>
-          <Value>130.521.230,02</Value>
+          <Label>Rentabilidade</Label>
+          <Value>2.34%</Value>
         </div>
       </Item>
 
       <Item>
-        <Icon />
+        <Icon selected>
+          <span class="material-icons">
+            expand_more
+          </span>
+        </Icon>
         <div>
           <Label>Saldo Bruto</Label>
           <Value>Minha carteira</Value>
         </div>
       </Item>
 
-      <Icon />
+      <Icon selected>
+        <span class="material-icons">
+          list
+        </span>
+      </Icon>
 
     </Items>
     </HeaderContainer>

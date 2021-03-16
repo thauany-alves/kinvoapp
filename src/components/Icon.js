@@ -8,4 +8,9 @@ export const Icon = styled.div`
   /* background: var(--border-card); */
   background: ${props => props.selected ? "var(--primary-color)" : "var(--border-card)"};
   color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
 `;

@@ -174,5 +174,5 @@ export const Select = styled.select`
   line-height: 24px;
   font-weight: 500;
   color: var(--text-items);
-  width: 150px;
+  width: 170px;
 `;
