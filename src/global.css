@@ -27,3 +27,34 @@ body {
   font-family: 'Montserrat';
   background: var(--background-page);
 }
+
+.pagination {
+  margin: 20px auto;
+  display: flex;
+  gap: 5px;
+  list-style: none;
+  outline: none;
+}
+.pagination > .active > a{
+  background-color: var(--border-card) ;
+  border-color: var(--border-card) ;
+  color: white;
+}
+.pagination > li > a{
+  border: 1px solid var(--border-in) ;
+  border-radius: 5px;
+  padding: 5px 10px;
+  outline: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus{
+  background-color: var(--border-in) ;
+  border-color: var(--border-in);
+  outline: none ;
+}
+.pagination > li > a, .pagination > li > span{
+  color: var(--text-label-header)
+}
+
+

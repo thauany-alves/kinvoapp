@@ -1,13 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
+import api from '../services/api';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
-import {Card, Label, Result, BorderIn, InputContainer,
+import {Card, InputContainer,
   CardTitle, CardHeader, Input, InputGroups, Select} from '../components/Card';
-import api from '../services/api';
+import Porfolio from '../components/Portfolio';
+
 import chart from '../assets/images/chart.svg';
 import Products from '../components/Products';
-import {formatCoin} from '../utils.js';
+import ReactPaginate from 'react-paginate';
+import Portfolio from '../components/Portfolio';
+
 
 const Page = styled.div`
   font-family: 'Montserrat';
@@ -30,63 +34,95 @@ const TitlePrimary = styled.h2`
   color: var(--primary-color);
 `;
 
-const Portfolio = styled.div`
+
+
+const PaginateContainer = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 11px;
+  align-content: center;
 `;
 
 
 function Dashboard(){
   const [portfolio, setPortfolio] = useState({});
-  const [originalProducts, setOriginalProducts] = useState([]);
   const [dailyEquityData, setDailyEquityData] = useState([]);
 
   const [search, setSearch] = useState('');
   const [select, setSelect] = useState('');
   const [products, setProducts] = useState([]);
+  const [originalProducts, setOriginalProducts] = useState([]);
+  
+  const [offset, setOffset] = useState(0);
+  
+  
+  const [pageCount, setPageCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentProducts, setCurrentProducts] = useState([]);
+  
+  async function getAllData(){
+    const response = await api.get('getFixedIncomeClassData');
+    
+    setPortfolio(response.data.data.snapshotByPortfolio);
+    setDailyEquityData(response.data.data.dailyEquityByPortfolioChartData);
+    setProducts(response.data.data.snapshotByProduct.sort(orderByName));
+    setCurrentProducts(productsForCurrentPage);
+    setPageCount(Math.ceil(response.data.data.snapshotByProduct.length / 5));
+    setOriginalProducts(response.data.data.snapshotByProduct);
+    
+  }
 
   useEffect(() => {
-    api.get('getFixedIncomeClassData')
-      .then(response => {
-        setPortfolio(response.data.data.snapshotByPortfolio);
-        setDailyEquityData(response.data.data.dailyEquityByPortfolioChartData);
-        setOriginalProducts(response.data.data.snapshotByProduct);
-        setProducts(response.data.data.snapshotByProduct);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    getAllData();    
   }, []);
+
+  useEffect(()=>{ 
+    setCurrentProducts(productsForCurrentPage);
+    console.log('new cp: ', currentProducts); 
+  },[products, offset]);
+  
+  useEffect(() => {
+    setProducts(searchProducts);  
+  }, [search]);
+
+  useEffect(() => {
+    setProducts(sortProduct);   
+    setCurrentProducts(productsForCurrentPage);
+  }, [select]);
+  
+    
+  // function handlePageClick(e){
+  //   setCurrentPage(e.selected);
+  //   setOffset(e.selected * 5);
+  // };
+
+  function productsForCurrentPage(){
+    return products.slice(offset, offset + 5);
+  }
 
   function handleSearch(e){
     const inputValue = String(e.target.value).toLowerCase();
     setSearch(inputValue);
-    
-  }
-
-  function handleSelect(e){
-    const selectValue = e.target.value;
-    setSelect(selectValue);
-    sortProduct(selectValue);
   }
 
   function searchProducts(){
+    if(search === ''){
+      setSelect('');
+      return originalProducts;
+    }
+
     return products.filter( product => {
       const name = String(product.fixedIncome.name).toLowerCase();
       const type = String(product.fixedIncome.bondType).toLowerCase();
       return name.includes(search) || type.includes(search);
-    })
+    });
   }
 
-  
   function orderByName(a, b){
     return a.fixedIncome.name > b.fixedIncome.name ? 1 : a.fixedIncome.name < b.fixedIncome.name ? -1 : 0
   }
 
   function orderByType(a, b){
-    return a.fixedIncome.bondType > b.fixedIncome.bondType ? 1 : a.fixedIncome.bondType < b.fixedIncome.bondType ? -1 : 0
+    return a.fixedIncome.bondType > b.fixedIncome.bondType ? 1 
+    : a.fixedIncome.bondType < b.fixedIncome.bondType ? -1 : 0
   }
 
   function orderByLowerProfitability(a, b){
@@ -97,95 +133,34 @@ function Dashboard(){
     return b.position.profitability - a.position.profitability;
   }
 
-  function sortProduct(select){
-    console.log('Entrou no ordenar por ', select)
+  function sortProduct(){
     switch (select){
       case 'name' : 
         return products.sort(orderByName);
       case 'type':
         return products.sort(orderByType);
       case 'lowerprofitability':
-        return products.sort(orderByLowerProfitability)
+        return products.sort(orderByLowerProfitability);
       case 'greaterprofitability':
-        return products.sort(orderByGreaterProfitability)
+        return products.sort(orderByGreaterProfitability);
       default:
-        return originalProducts;
-    }
-        
+        return originalProducts.sort(orderByName);
+    }      
   }
 
-  useEffect(() => {
-    if(search === '') {
-      setProducts(originalProducts);
-      sortProduct(select);
-    }
-    else
-      setProducts(searchProducts);
-  }, [search]);
-
+  
   return(
     <>
       <Header />
       <Page>
         <Sidebar />
         <Container>
-          <TitlePrimary>Renda Fixa</TitlePrimary>
-          
-          <Portfolio>
-            <Card small>
-              <BorderIn></BorderIn>
-              <div>
-                <Label>Saldo Bruto</Label>
-                <Result>R$ {formatCoin(portfolio.equity)}</Result>
-              </div>
-            </Card>
-
-            <Card small>
-              <BorderIn></BorderIn>
-              <div>
-                <Label>Valor aplicado</Label>
-                <Result>R$ {formatCoin(portfolio.valueApplied)}</Result>
-              </div>
-            </Card>
-
-            <Card small>
-              <BorderIn></BorderIn>
-              <div>
-                <Label>Resultado</Label>
-                <Result>R$ {formatCoin(portfolio.equityProfit)}</Result>
-              </div>
-            </Card>
-
-            <Card small>
-              <BorderIn></BorderIn>
-              <div>
-                <Label>Rentabilidade</Label>
-                <Result>{portfolio.percentageProfit}%</Result>
-              </div>
-            </Card>
-
-            <Card small>
-              <BorderIn></BorderIn>
-              <div>
-                <Label>cdi</Label>
-                <Result>{portfolio.indexerValue}%</Result>
-              </div>
-            </Card>
-
-            <Card small>
-              <BorderIn></BorderIn>
-              <div>
-                <Label>% sobre cdi</Label>
-                <Result>{portfolio.percentageOverIndexer}%</Result>
-              </div>
-            </Card>
-          </Portfolio>
-
+          <TitlePrimary>Renda Fixa</TitlePrimary> 
+          <Portfolio portfolio={portfolio} />
           <Card >
             {/* <CardTitle>Rentabilidade de Títulos</CardTitle> */}
             <img src={chart} alt=""/>
-          </Card>
-
+          </Card> 
           <Card >
             <CardHeader>
               <CardTitle>Minhas rendas fixas</CardTitle>
@@ -194,11 +169,11 @@ function Dashboard(){
                     <Select 
                       name="order" 
                       value={select}
-                      onChange={handleSelect}
+                      onChange={e => setSelect(e.target.value)}
                     >
-                      <option>Ordernar por</option>
+                      <option value=''>Ordernar por</option>
                       <option value="name">Titulo</option>
-                      <option value="bondType">Tipo</option>
+                      <option value="type">Tipo</option>
                       <option value="lowerprofitability">Menor Rentabilidade</option>
                       <option value="greaterprofitability">Maior Rentabilidade</option>
                     </Select>
@@ -216,79 +191,25 @@ function Dashboard(){
                 </InputContainer>
               </InputGroups>
             </CardHeader>
-            <Products products={products} />
-            {/* {products.map((product, index) => {
-              return(
-                <DetailedRow key={index}>
-                  <DetailedCard>
-                    <DetailedCardHeader>
-                      <Label>Titulo</Label>
-                    </DetailedCardHeader>
-                    <DetailedCardBody>
-                      <TitleName>{product.fixedIncome.name}</TitleName>
-                      <div>
-                        <Label>Classe</Label>
-                        <Data>{product.fixedIncome.bondType}</Data>
-                      </div>
-                    </DetailedCardBody>
-                  </DetailedCard>
-
-                  <DetailedCard>
-                    <DetailedCardHeader>
-                      <Label>Resultado</Label>
-                    </DetailedCardHeader>
-                    <DetailedCardBody>
-                      <div>
-                        <Label>Valor Inves.</Label>
-                        <Data green>{formatCoin(product.position.valueApplied)}</Data>
-                      </div>
-
-                      <div>
-                        <Label>Saldo Bruto</Label>
-                        <Data green>{formatCoin(product.position.equity)}</Data>
-                      </div>
-
-                      <div>
-                        <Label>Rent.</Label>
-                        <Data green>{product.position.profitability}%</Data>
-                      </div>
-
-                      <div>
-                        <Label>% da cart.</Label>
-                        <Data green>{product.position.portfolioPercentage}%</Data>
-                      </div>
-
-                      <div>
-                        <Label>{product.position.indexerLabel}</Label>
-                        <Data green>{product.position.indexerValue}</Data>
-                      </div>
-
-                      <div>
-                        <Label>sobre {product.position.indexerLabel}</Label>
-                        <Data green>{product.position.percentageOverIndexer}</Data>
-                      </div>
-                    </DetailedCardBody>
-                  </DetailedCard>
-
-                  <DetailedCard>
-                    <DetailedCardHeader>
-                      <Label>Vencimento</Label>
-                    </DetailedCardHeader>
-                    <DetailedCardBody>
-                      <div>
-                        <Label>data venc.</Label>
-                        <Data blue>{product.due.date}</Data>
-                      </div>
-
-                      <div>
-                        <Label>Dias até venc.</Label>
-                        <Data blue>{product.due.daysUntilExpiration}</Data>
-                      </div>
-                    </DetailedCardBody>
-                  </DetailedCard>
-                </DetailedRow>
-              ) 
-            })} */}
+            <Products products={currentProducts} />
+            <PaginateContainer>
+            <ReactPaginate
+              previousLabel={"←"}
+              nextLabel={"→"}
+              breakLabel={<span className="gap">...</span>}
+              pageCount={pageCount}
+              onPageChange={e => {
+                setCurrentPage(e.selected);
+                setOffset(e.selected * 5);
+              }}
+              forcePage={currentPage}
+              containerClassName={"pagination"}
+              previousLinkClassName={"previous_page"}
+              nextLinkClassName={"next_page"}
+              disabledClassName={"disabled"}
+              activeClassName={"active"}
+            />
+            </PaginateContainer>
           </Card>
 
         </Container>
@@ -296,5 +217,4 @@ function Dashboard(){
     </>
   );
 }
-
 export default Dashboard;
