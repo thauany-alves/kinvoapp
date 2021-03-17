@@ -1,8 +1,7 @@
 
 <img src="/public/logo.svg" width="100px" />
-# Desafio Front-end Web da Kinvo
 
-## Sobre
+# Desafio Front-end Web da Kinvo
 Este desafio foi projetado para avaliar a capacidade técnica de candidatos à vagas de Desenvolvedor Front-end voltadas para o desenvolvimento web, independente da senioridade. O nível de exigência da avaliação se adequa ao nível da vaga.   
 
 ## Requisitos do Desafio
@@ -29,7 +28,7 @@ Este desafio foi projetado para avaliar a capacidade técnica de candidatos à v
 
 
 ### Demo 
-<img src="/public/desktop.png" width="400px">
+<img src="/public/desktop.png" width="600px">
 
 
 ### Tecnologias utilizadas para desenvolvimento
