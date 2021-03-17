@@ -4,11 +4,11 @@ export const Card = styled.div`
   margin: 18px 0;
   background: var(--background-card);
   border-radius: 10px;
-  padding: 10px 0;
+  padding: ${props => props.small ? '10px 0' : '18px 0'};;
 
   display: ${props => props.small ? 'flex' : ''};
   flex-direction: ${props => props.small ? 'row' : ''};
-  min-width: 160px;
+  min-width: 170px;
   
 `;
 
@@ -26,7 +26,7 @@ export const ResultContainer =styled.div`
 `;
 
 export const CardHeader = styled.header`
-  padding: 18px;
+  /* padding: 18px; */
   border-bottom: 1px solid var(--border-card);
 
   display: flex;
@@ -36,6 +36,7 @@ export const CardHeader = styled.header`
 `;
 
 export const CardTitle = styled.h3`
+  padding: 2px 18px 18px 18px;
   font-size: 16px;
   font-weight: 500;
   color: var(--text-title);
@@ -136,6 +137,7 @@ export const Data = styled.p`
 `;
 
 export const InputGroups = styled.div`
+  padding: 2px 18px 18px 18px;
   display: flex;
   flex-direction: row;
   gap: 14px;
@@ -175,4 +177,17 @@ export const Select = styled.select`
   font-weight: 500;
   color: var(--text-items);
   width: 170px;
+`;
+
+export const CardPieChart= styled.div`
+  width: 520px;
+  padding: 18px 0;
+  background: var(--background-card);
+  border-radius: 10px;
+`;
+
+export const ChartsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
 `;

@@ -3,27 +3,30 @@ import styled from 'styled-components';
 import api from '../services/api';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
-import {Card, InputContainer,
-  CardTitle, CardHeader, Input, InputGroups, Select} from '../components/Card';
+import {Card, CardPieChart, InputContainer,CardTitle, ChartsContainer, 
+  CardHeader, Input, InputGroups, Select} from '../components/Card';
 import Porfolio from '../components/Portfolio';
-
-import chart from '../assets/images/chart.svg';
 import Products from '../components/Products';
 import ReactPaginate from 'react-paginate';
 import Portfolio from '../components/Portfolio';
+import MyChart from '../components/MyChart';
+import PieChart from '../components/PieChart';
 
 
 const Page = styled.div`
   font-family: 'Montserrat';
-  width: 100%;
+  min-width: fit-content;
   height: 100%;
   background: var(--background-page);
+`;
 
+const Main = styled.div`
   display: flex;
   flex-direction: row;
+  position: relative;
 `;
 const Container = styled.div`
-  /* width: 100%; */
+  margin-left: 222px;
   display: flex;
   flex-direction: column;
   padding: 24px 20px;
@@ -33,13 +36,11 @@ const TitlePrimary = styled.h2`
   font-weight: bold;
   color: var(--primary-color);
 `;
-
-
-
 const PaginateContainer = styled.div`
   display: flex;
   align-content: center;
 `;
+
 
 
 function Dashboard(){
@@ -148,18 +149,20 @@ function Dashboard(){
     }      
   }
 
+  const filterTypes = products.map(p => p.fixedIncome.bondType); 
+  const filterTitles = products.map(p => p.fixedIncome.name); 
   
   return(
-    <>
+    <Page>
       <Header />
-      <Page>
+      <Main>
         <Sidebar />
         <Container>
           <TitlePrimary>Renda Fixa</TitlePrimary> 
           <Portfolio portfolio={portfolio} />
           <Card >
-            {/* <CardTitle>Rentabilidade de Títulos</CardTitle> */}
-            <img src={chart} alt=""/>
+            <CardTitle>Rentabilidade de Títulos</CardTitle>
+            <MyChart dailyData={dailyEquityData} />
           </Card> 
           <Card >
             <CardHeader>
@@ -211,10 +214,26 @@ function Dashboard(){
             />
             </PaginateContainer>
           </Card>
-
+          <ChartsContainer>
+            
+            <CardPieChart>
+              <CardHeader>
+                <CardTitle>Divisão de Carteiras por tipos</CardTitle>
+              </CardHeader>
+              <PieChart types={filterTypes} />
+            </CardPieChart>
+            
+            <CardPieChart>
+              <CardHeader>
+                <CardTitle>Divisão de Carteiras por títulos</CardTitle>
+              </CardHeader>
+              <PieChart types={filterTitles} />
+            </CardPieChart>
+          </ChartsContainer>
+          
         </Container>
-      </Page>
-    </>
+      </Main>
+    </Page>
   );
 }
 export default Dashboard;

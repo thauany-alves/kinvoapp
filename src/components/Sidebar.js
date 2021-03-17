@@ -3,15 +3,20 @@ import styled from 'styled-components';
 import { Icon } from './Icon';
 
 const Container = styled.div`
-  min-width: 220px;
-  height: 100%;
+  width: 220px;
   background: var(--background-card);
 
   display: flex;
   flex-direction: column;
 
+  position: absolute;
+  top:0;
+  bottom: 0;
+  left: 0;
+  
   font-size: 0.78rem;
   font-weight: 500;
+  /* padding-bottom: 40px; */
 `;
 
 

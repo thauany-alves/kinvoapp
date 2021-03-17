@@ -4,10 +4,10 @@ import { DetailedRow, DetailedCard, DetailedCardHeader,
 import {formatCoin} from '../utils.js';
 
 
-function Products(props){
+function Products(props){  
   return(
     <>
-    {props.products.map((product, index) => {
+     {props.products.map((product, index) => {
       return(
         <DetailedRow key={index}>
           <DetailedCard>
@@ -78,7 +78,7 @@ function Products(props){
           </DetailedCard>
         </DetailedRow>
       ) 
-    })}
+    })} 
     </>
   )
 }
