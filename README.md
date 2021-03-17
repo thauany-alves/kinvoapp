@@ -19,7 +19,7 @@ Este desafio foi projetado para avaliar a capacidade técnica de candidatos à v
 - Fazer uso da biblioteca Styled Components;
 - Permitir ordenação de produtos seção Minhas Rendas Fixas a partir do menu seletor;
 
-### Requisitos os quais atendi
+## Requisitos os quais implementados
 - Dados obtidos pela API 
 - Filtragem e ordenação dos produtos
 - Paginação 
